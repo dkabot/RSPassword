@@ -1,19 +1,21 @@
 package com.dkabot.RSPassword;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.persistence.PersistenceException;
 
-import org.bukkit.event.Event;
-import org.bukkit.event.block.BlockListener;
-import org.bukkit.event.player.PlayerListener;
+import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class RSPassword extends JavaPlugin {
 	Logger log = Logger.getLogger("Minecraft");
+	public Map<String, String> password = new HashMap<String, String>();
 	private Command Com;
 	@Override
 	public void onDisable() {
@@ -23,16 +25,11 @@ public class RSPassword extends JavaPlugin {
 	}
 	@Override
 	public void onEnable() {
-		PluginDescriptionFile pdfFile = this.getDescription();
-		this.log.info( pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled.");
 		setupDatabase();
 		Com = new Command(this);
 		getCommand("rsp").setExecutor(Com);
-		PlayerListener plistener = new RSPlayerListener();
-		BlockListener blistener = new RSPBlockListener();
-	    this.getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT,plistener, Event.Priority.Low, this);
-	    this.getServer().getPluginManager().registerEvent(Event.Type.BLOCK_BREAK, blistener, Event.Priority.Low, this);
-	    this.getServer().getPluginManager().registerEvent(Event.Type.SIGN_CHANGE, blistener, Event.Priority.Low, this);
+		new RSPListener(this);
+		this.log.info( getDescription().getName() + " version " + getDescription().getVersion() + " is enabled.");
 	}
 
     private void setupDatabase() {
@@ -51,4 +48,26 @@ public class RSPassword extends JavaPlugin {
         return list;
     }
     
+    public boolean isParsableToInt(String toTest) {
+    	try{
+    		Integer.parseInt(toTest);
+    		return true;
+    	}
+    	catch(NumberFormatException NFE) {
+    		return false;
+    	}
+    }
+    
+    public void toggleLever(Block target) {
+    	net.minecraft.server.Block.byId[target.getType().getId()].interact(((CraftWorld)target.getWorld()).getHandle(), target.getX(), target.getY(), target.getZ(), null);
+    }
+    
+    public String obfupass(String pass) {
+    	String obfupass = "_";
+    	for (int i = 2; (pass.length())+1 > i;) {
+    		obfupass = obfupass + "_";
+    		i++;
+    	}
+    	return obfupass;
+    }
 }
