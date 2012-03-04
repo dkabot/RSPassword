@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 import javax.persistence.PersistenceException;
 
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.material.Lever;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -58,8 +58,11 @@ public class RSPassword extends JavaPlugin {
     	}
     }
     
-    public void toggleLever(Block target) {
-    	net.minecraft.server.Block.byId[target.getType().getId()].interact(((CraftWorld)target.getWorld()).getHandle(), target.getX(), target.getY(), target.getZ(), null);
+    public void toggleLever(Block leverTarget) {
+    	Lever lever = (Lever)leverTarget.getState().getData();
+    	if(lever.isPowered()) leverTarget.setData((byte) (leverTarget.getData() & ~0x8));
+    	else leverTarget.setData((byte) (leverTarget.getData() | 0x8));
+    	leverTarget.getState().update();
     }
     
     public String obfupass(String pass) {

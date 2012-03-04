@@ -44,10 +44,9 @@ public class RSPListener implements Listener {
 						org.bukkit.material.Sign signMaterial = (org.bukkit.material.Sign)event.getClickedBlock().getState().getData();
 						final org.bukkit.block.Sign signBlock = (org.bukkit.block.Sign)event.getClickedBlock().getState();
 						if (signBlock.getLine(3) == ChatColor.stripColor("ACCEPTED")) return;
-						BlockFace oppositeSign = null;
-						if(signMaterial.isWallSign()) oppositeSign = signMaterial.getFacing().getOppositeFace();
-						if(event.getClickedBlock().getRelative(oppositeSign, 2).getState().getData() instanceof Lever) {
-							final Block leverBlock = (Block) event.getClickedBlock().getRelative(oppositeSign, 2);
+						BlockFace leverDirection = signMaterial.getAttachedFace();
+						if(event.getClickedBlock().getRelative(leverDirection, 2).getState().getData() instanceof Lever) {
+							final Block leverBlock = (Block) event.getClickedBlock().getRelative(leverDirection, 2);
 							final String obfuPass = plugin.obfupass(interactClass.getPassword());
 							signBlock.setLine(3, ChatColor.GREEN + "ACCEPTED");
 							signBlock.update();
@@ -83,12 +82,6 @@ public class RSPListener implements Listener {
 				    }
 				    if(event.getLine(3) == "" | event.getLine(2).contains(" ") | event.getLine(2) == "" | event.getLine(1) == "" | plugin.isParsableToInt(event.getLine(3)) == false) {
 				    	event.getPlayer().sendMessage(ChatColor.RED + "Invalid RSP sign!");
-				    	event.setLine(2, "[Hidden Pass]");
-				    	return;
-				    }
-				    BlockFace signFacing = ((org.bukkit.material.Sign)event.getBlock().getState().getData()).getAttachedFace();
-				    if(signFacing != BlockFace.NORTH && signFacing != BlockFace.SOUTH && signFacing != BlockFace.EAST && signFacing != BlockFace.WEST ){
-				    	event.getPlayer().sendMessage(ChatColor.RED + "The RSP sign must not be diagonal.");
 				    	event.setLine(2, "[Hidden Pass]");
 				    	return;
 				    }
