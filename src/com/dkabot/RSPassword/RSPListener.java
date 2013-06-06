@@ -114,7 +114,6 @@ public class RSPListener implements Listener {
 		public void onBlockBreak(BlockBreakEvent event) {
 			if(event.isCancelled()) return;
 			if(event.getBlock().getState() instanceof Sign){
-				Sign sign = (Sign)event.getBlock().getState();
 				Persistance breakClass = plugin.getDatabase().find(Persistance.class).where().eq("location", event.getBlock().getLocation().toString()).findUnique();
 				if (breakClass == null) {
 					return;
