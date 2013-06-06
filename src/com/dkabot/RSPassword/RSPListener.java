@@ -38,8 +38,8 @@ public class RSPListener implements Listener {
 				if (interactClass == null) {
 					return;
 				}
-				if(plugin.password.containsKey(event.getPlayer()) | event.getPlayer().isOp() | event.getPlayer().hasPermission("rspassword.useany")) {
-					if(event.getPlayer().isOp() | event.getPlayer().hasPermission("rspassword.useany") | plugin.password.get(event.getPlayer().getName()) == null | plugin.password.get(event.getPlayer().getName()) == interactClass.getPassword()) {
+				if(plugin.password.containsKey(event.getPlayer()) || event.getPlayer().isOp() || event.getPlayer().hasPermission("rspassword.useany")) {
+					if(event.getPlayer().isOp() || event.getPlayer().hasPermission("rspassword.useany") || plugin.password.get(event.getPlayer().getName()) == null || plugin.password.get(event.getPlayer().getName()) == interactClass.getPassword()) {
 						if(plugin.password.containsKey(event.getPlayer().getName())) plugin.password.remove(event.getPlayer().getName());
 						org.bukkit.material.Sign signMaterial = (org.bukkit.material.Sign)event.getClickedBlock().getState().getData();
 						final org.bukkit.block.Sign signBlock = (org.bukkit.block.Sign)event.getClickedBlock().getState();
@@ -66,7 +66,7 @@ public class RSPListener implements Listener {
 					}
 				}
 				else {
-					//TODO Add chat intercept
+					event.getPlayer().sendMessage(ChatColor.GREEN + "This is a RSPassword sign! Use " + ChatColor.RED + "/rsp <password>" + ChatColor.GREEN + " then click it again!");
 			}
 		}
 	}
@@ -75,12 +75,12 @@ public class RSPListener implements Listener {
 	    @EventHandler(ignoreCancelled = true)
 		public void onSignChange(SignChangeEvent event) {
 			if(event.isCancelled()) return;
-			    if(event.getLine(0).equalsIgnoreCase("[RSPassword]") | event.getLine(0).equalsIgnoreCase("[RSP]")) {
+			    if(event.getLine(0).equalsIgnoreCase("[RSPassword]") || event.getLine(0).equalsIgnoreCase("[RSP]")) {
 				    if(!event.getPlayer().isOp() && !event.getPlayer().hasPermission("rspassword.create")) {
 						event.getPlayer().sendMessage(ChatColor.RED + "You do not have permission to create RSPassword signs.");
 						return;
 				    }
-				    if(event.getLine(3) == "" | event.getLine(2).contains(" ") | event.getLine(2) == "" | event.getLine(1) == "" | plugin.isParsableToInt(event.getLine(3)) == false) {
+				    if(event.getLine(3) == "" || event.getLine(2).contains(" ") || event.getLine(2) == "" || event.getLine(1) == "" || plugin.isParsableToInt(event.getLine(3)) == false) {
 				    	event.getPlayer().sendMessage(ChatColor.RED + "Invalid RSP sign!");
 				    	event.setLine(2, "[Hidden Pass]");
 				    	return;
@@ -114,12 +114,14 @@ public class RSPListener implements Listener {
 		public void onBlockBreak(BlockBreakEvent event) {
 			if(event.isCancelled()) return;
 			if(event.getBlock().getState() instanceof Sign){
+				Sign sign = (Sign)event.getBlock().getState();
+				if(!sign.getLine(0).equalsIgnoreCase("[RSPassword]") && !sign.getLine(0).equalsIgnoreCase("[RSP]")) return;
 				Persistance breakClass = plugin.getDatabase().find(Persistance.class).where().eq("location", event.getBlock().getLocation().toString()).findUnique();
 				if (breakClass == null) {
 					return;
 				}
 				else {
-					if (event.getPlayer().getName() == breakClass.getCreatorName() | event.getPlayer().isOp() | event.getPlayer().hasPermission("RSPassword.breakany")) {
+					if (event.getPlayer().getName() == breakClass.getCreatorName() || event.getPlayer().isOp() || event.getPlayer().hasPermission("RSPassword.breakany")) {
 						plugin.getDatabase().delete(breakClass);
 						event.getPlayer().sendMessage(ChatColor.GREEN + "RSPassword sign destroyed!");
 						return;

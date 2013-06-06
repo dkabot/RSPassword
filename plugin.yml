@@ -1,10 +1,9 @@
 name: RSPassword
 main: com.dkabot.RSPassword.RSPassword
-version: 0.4
+version: 0.5
 author: dkabot
 database: true
-description: >
-            Password protected signs that toggle redstone.
+description: Password protected signs that toggle redstone.
 commands:
   rsp:
     description: Readies a password for use on a sign.
