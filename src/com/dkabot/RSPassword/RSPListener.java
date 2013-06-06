@@ -39,7 +39,7 @@ public class RSPListener implements Listener {
 					return;
 				}
 				if(plugin.password.containsKey(event.getPlayer()) || event.getPlayer().isOp() || event.getPlayer().hasPermission("rspassword.useany")) {
-					if(event.getPlayer().isOp() || event.getPlayer().hasPermission("rspassword.useany") || plugin.password.get(event.getPlayer().getName()) == null || plugin.password.get(event.getPlayer().getName()) == interactClass.getPassword()) {
+					if(event.getPlayer().isOp() || event.getPlayer().hasPermission("rspassword.useany") || plugin.password.get(event.getPlayer().getName()) != null || plugin.password.get(event.getPlayer().getName()) == interactClass.getPassword()) {
 						if(plugin.password.containsKey(event.getPlayer().getName())) plugin.password.remove(event.getPlayer().getName());
 						org.bukkit.material.Sign signMaterial = (org.bukkit.material.Sign)event.getClickedBlock().getState().getData();
 						final org.bukkit.block.Sign signBlock = (org.bukkit.block.Sign)event.getClickedBlock().getState();
@@ -115,7 +115,6 @@ public class RSPListener implements Listener {
 			if(event.isCancelled()) return;
 			if(event.getBlock().getState() instanceof Sign){
 				Sign sign = (Sign)event.getBlock().getState();
-				if(!sign.getLine(0).equalsIgnoreCase("[RSPassword]") && !sign.getLine(0).equalsIgnoreCase("[RSP]")) return;
 				Persistance breakClass = plugin.getDatabase().find(Persistance.class).where().eq("location", event.getBlock().getLocation().toString()).findUnique();
 				if (breakClass == null) {
 					return;
